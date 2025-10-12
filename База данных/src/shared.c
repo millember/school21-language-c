@@ -2,10 +2,10 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "index.h"
 #include "master_levels.h"
 #include "master_modules.h"
 #include "master_status_events.h"
-#include "index.h"
 
 #define PATH_TO_MASTER_MODULES "../materials/master_modules.db"
 #define PATH_TO_MASTER_LEVELS "../materials/master_levels.db"
@@ -133,7 +133,7 @@ int update(int name) {
     return dooper;
 }
 
-int delete (int name) {
+int delete(int name) {
     int dooper = 0;
     if (name == 1) {
         deleteMasterModules(PATH_TO_MASTER_MODULES, &dooper);
@@ -179,7 +179,7 @@ void delete_modul_by_id(int id) {
     }
     if (not == 1) {
         updateMasterModules_by_id(PATH_TO_MASTER_MODULES, modules_new, id);
-    }else{
+    } else {
         printf("There is no module with this id\n");
     }
     free(modules);
@@ -202,10 +202,10 @@ void protect_level_by_id(int id) {
     }
     if (not == 1) {
         protectMasterLevels_by_id(PATH_TO_MASTER_LEVELS, levels_new, id);
-    }else{
+    } else {
         printf("There is no level with this level\n");
     }
-    
+
     free(levels);
     free(levels_new);
 }
@@ -230,7 +230,7 @@ void move_to_new_memory(int id) {
         printf("New level and cell:\n");
         scanf("%d %d", &modules_new->level, &modules_new->cell);
         updateMasterModules_by_id(PATH_TO_MASTER_MODULES, modules_new, id);
-    }else{
+    } else {
         printf("There is no module with this id\n");
     }
     free(modules);
@@ -245,8 +245,7 @@ void get_first_level_modules() {
     printf("ID\tName\t\t\tLevel\tCell\tDeleted\n");
     for (int i = 0; i < count_modules; i++) {
         if (modules[i].level == 1 && modules[i].deleted == 0) {
-            printf("%d\t%s\t\t%d\t%d\t%d\n", 
-                   modules[i].id, modules[i].name, modules[i].level,
+            printf("%d\t%s\t\t%d\t%d\t%d\n", modules[i].id, modules[i].name, modules[i].level,
                    modules[i].cell, modules[i].deleted);
         }
     }
@@ -255,12 +254,12 @@ void get_first_level_modules() {
 
 void disable_ai_system() {
     printf("=== Starting AI Disable Procedure ===\n");
-    
+
     printf("1. Disabling additional modules...\n");
     Module* modules;
     int module_count = 0;
     selectMasterModules(PATH_TO_MASTER_MODULES, &modules, &module_count);
-    
+
     for (int i = 0; i < module_count; i++) {
         if (modules[i].id != 0 && modules[i].deleted == 0) {
             StatusEvent event;
@@ -269,11 +268,11 @@ void disable_ai_system() {
             event.newStatus = 0;
             strcpy(event.date, "01.01.2024");
             strcpy(event.time, "00:00:00");
-            
+
             insertMasterStatusEvents(PATH_TO_MASTER_STATUS_EVENTS, &event);
         }
     }
-    
+
     printf("2. Deleting additional modules...\n");
     for (int i = 0; i < module_count; i++) {
         if (modules[i].id != 0 && modules[i].deleted == 0) {
@@ -282,7 +281,7 @@ void disable_ai_system() {
             updateMasterModules_by_id(PATH_TO_MASTER_MODULES, &deleted_module, modules[i].id);
         }
     }
-    
+
     printf("3. Securing main module...\n");
     int status_sequence[] = {0, 1, 20};
     for (int i = 0; i < 3; i++) {
@@ -292,10 +291,10 @@ void disable_ai_system() {
         event.newStatus = status_sequence[i];
         strcpy(event.date, "01.01.2024");
         strcpy(event.time, "00:00:00");
-        
+
         insertMasterStatusEvents(PATH_TO_MASTER_STATUS_EVENTS, &event);
     }
-    
+
     printf("4. Moving main module to first level...\n");
     Module main_module;
     main_module.id = 0;
@@ -303,25 +302,25 @@ void disable_ai_system() {
     main_module.level = 1;
     main_module.cell = 1;
     main_module.deleted = 0;
-    
+
     updateMasterModules_by_id(PATH_TO_MASTER_MODULES, &main_module, 0);
-    
+
     printf("5. Protecting first level...\n");
     Level protected_level;
     protected_level.level = 1;
     protected_level.cells = 4;
     protected_level.protected = 1;
     protectMasterLevels_by_id(PATH_TO_MASTER_LEVELS, &protected_level, 1);
-    
+
     printf("6. Verification...\n");
-    
+
     Module* final_modules;
     int final_count = 0;
     selectMasterModules(PATH_TO_MASTER_MODULES, &final_modules, &final_count);
-    
+
     Module* main_module_final = NULL;
     int other_modules_on_first_level = 0;
-    
+
     for (int i = 0; i < final_count; i++) {
         if (final_modules[i].id == 0 && final_modules[i].level == 1 && final_modules[i].cell == 1) {
             main_module_final = &final_modules[i];
@@ -329,14 +328,14 @@ void disable_ai_system() {
             other_modules_on_first_level++;
         }
     }
-    
+
     if (main_module_final && other_modules_on_first_level == 0) {
         printf("SUCCESS: Only main AI module in first level, first cell!\n");
     } else {
         printf("ERROR: Main module not properly isolated!\n");
         printf("Other modules on first level: %d\n", other_modules_on_first_level);
     }
-    
+
     free(modules);
     free(final_modules);
     printf("=== AI Disable Procedure Complete ===\n");
@@ -359,12 +358,13 @@ void* select_level_with_index(int level) {
 }
 
 void* select_event_with_index(int event_id) {
-    return select_with_index(PATH_TO_MASTER_STATUS_EVENTS, PATH_TO_EVENTS_INDEX, event_id, sizeof(StatusEvent));
+    return select_with_index(PATH_TO_MASTER_STATUS_EVENTS, PATH_TO_EVENTS_INDEX, event_id,
+                             sizeof(StatusEvent));
 }
 
 int select_fast(int table_type, int record_count) {
     int success = 0;
-    
+
     if (table_type == 1) {
         Module* modules;
         int module_count = 0;
@@ -373,9 +373,8 @@ int select_fast(int table_type, int record_count) {
         for (int i = 0; i < module_count && i < record_count; i++) {
             Module* fast_module = (Module*)select_module_with_index(modules[i].id);
             if (fast_module) {
-                printf("%d\t%s\t\t%d\t%d\t%d [INDEX]\n", 
-                       fast_module->id, fast_module->name, fast_module->level,
-                       fast_module->cell, fast_module->deleted);
+                printf("%d\t%s\t\t%d\t%d\t%d [INDEX]\n", fast_module->id, fast_module->name,
+                       fast_module->level, fast_module->cell, fast_module->deleted);
                 free(fast_module);
             }
         }
@@ -389,8 +388,7 @@ int select_fast(int table_type, int record_count) {
         for (int i = 0; i < level_count && i < record_count; i++) {
             Level* fast_level = (Level*)select_level_with_index(levels[i].level);
             if (fast_level) {
-                printf("%d\t%d\t%d [INDEX]\n", 
-                       fast_level->level, fast_level->cells, fast_level->protected);
+                printf("%d\t%d\t%d [INDEX]\n", fast_level->level, fast_level->cells, fast_level->protected);
                 free(fast_level);
             }
         }

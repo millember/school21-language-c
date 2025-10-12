@@ -1,6 +1,5 @@
 #define ENTITY
 
-
 //////////////////////////////////////////////////////
 ENTITY *select(FILE *db, int id);
 int delete(FILE *db, int id);

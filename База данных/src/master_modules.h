@@ -13,6 +13,6 @@ void selectMasterModules(const char *, Module **, int *);
 void insertMasterModules(const char *, Module *);
 void updateMasterModules(const char *, int *);
 void deleteMasterModules(const char *, int *);
-void updateMasterModules_by_id(const char*, Module*, int);
+void updateMasterModules_by_id(const char *, Module *, int);
 
 #endif

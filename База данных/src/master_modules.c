@@ -37,16 +37,15 @@ void updateMasterModules(const char* filename, int* dooper) {
     Module* module = malloc(sizeof(Module));
     Module* module_new = malloc(sizeof(Module));
     printf("Write:\nid name level cell deleted\n");
-    scanf("%d %s %d %d %d", &module->id, module->name, &module->level, &module->cell,
-          &module->deleted);
+    scanf("%d %s %d %d %d", &module->id, module->name, &module->level, &module->cell, &module->deleted);
     selectMasterModules(filename, &modules_all, &count_modules);
     fclose(file);
     file = fopen(filename, "w+b");
     for (int i = 0; i < count_modules; i++) {
         if (modules_all[i].id == module->id) {
             printf("Write new:\nid name level cell deleted\n");
-            scanf("%d %s %d %d %d", &module_new->id, module_new->name, &module_new->level,
-                  &module_new->cell, &module_new->deleted);
+            scanf("%d %s %d %d %d", &module_new->id, module_new->name, &module_new->level, &module_new->cell,
+                  &module_new->deleted);
             fwrite(module_new, sizeof(Module), 1, file);
             *dooper = 1;
         } else {

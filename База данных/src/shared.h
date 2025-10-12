@@ -4,7 +4,7 @@
 int select(int, int);
 int insert(int);
 int update(int);
-int delete (int);
+int delete(int);
 void module_status_1();
 void delete_modul_by_id(int);
 void protect_level_by_id(int);

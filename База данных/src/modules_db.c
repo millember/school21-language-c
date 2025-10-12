@@ -99,9 +99,7 @@ void show_menu() {
     printf("14. Exit\n");
 }
 
-void show_table_menu() { 
-    printf("Choose table:\n1. Modules\n2. Levels\n3. Status events\n"); 
-}
+void show_table_menu() { printf("Choose table:\n1. Modules\n2. Levels\n3. Status events\n"); }
 
 void handle_select() {
     int table_type = 0;
@@ -154,7 +152,7 @@ void handle_delete() {
     int success = 1;
     show_table_menu();
     scanf("%d", &table_type);
-    success = delete(table_type);
+    success = delete (table_type);
     if (success == 2) {
         printf("Table not found\n");
     } else if (success == 0) {
